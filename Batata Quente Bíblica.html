@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Batata Quente Bíblica</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Grenze+Gotisch:wght@800&family=Nunito:wght@600;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#efe4cf;--wood:#6b4426;--wood-dark:#4a2e19;
+  --parch:#f7ecd0;--parch-edge:#e2cfa2;--ink:#2a1d12;--ink-soft:#6a5440;
+  --seal:#a3262a;--seal-ink:#fff6ec;--brass:#c9a24b;--ok:#2f7d46;
+  --page-text:#2a1d12;--page-soft:#6a5440;--focus:#1f5fbf;color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#16100b;--wood:#4f321c;--wood-dark:#33200f;
+    --parch:#ecdcb4;--parch-edge:#cdb684;--ink:#24180e;--ink-soft:#5e4a37;
+    --seal:#b8343a;--seal-ink:#fff6ec;--brass:#d8b45e;--ok:#3d9a59;
+    --page-text:#24180e;--page-soft:#5e4a37;--focus:#8fb6ff;color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#16100b;--wood:#4f321c;--wood-dark:#33200f;
+  --parch:#ecdcb4;--parch-edge:#cdb684;--ink:#24180e;--ink-soft:#5e4a37;
+  --seal:#b8343a;--seal-ink:#fff6ec;--brass:#d8b45e;--ok:#3d9a59;
+  --page-text:#24180e;--page-soft:#5e4a37;--focus:#8fb6ff;color-scheme:dark;
+}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--parch);color:var(--page-text);font-family:"Nunito",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:18px;line-height:1.45}
+button,select{font:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+
+.wrap{max-width:980px;margin:0 auto;padding:20px 20px 40px}
+.title{font-family:"Grenze Gotisch","Old English Text MT",Georgia,serif;font-weight:800;font-size:clamp(2.2rem,5vw,3.4rem);line-height:1;margin:0}
+.subtitle{margin:4px 0 18px;opacity:.75;font-weight:800}
+
+.parch{
+  --ink:var(--page-text);--ink-soft:var(--page-soft);
+  position:relative;color:var(--page-text);
+  min-height:420px;display:flex;flex-direction:column;
+}
+
+.settings{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:center;gap:8px 18px;margin-top:14px;padding-top:12px;border-top:2px dashed var(--parch-edge)}
+.settings label{display:flex;flex-direction:column;font-weight:800;font-size:.75rem;gap:2px;color:var(--ink-soft)}
+.settings select{padding:3px 6px;border-radius:6px;border:1.5px solid var(--ink);background:#fffaf0;color:var(--ink);font-weight:700;font-size:.8rem}
+.round{font-weight:900;font-size:.85rem;color:var(--ink-soft)}
+
+/* pergunta em destaque, ocupando a tela toda */
+body.spotlight{overflow:hidden}
+body.spotlight #viewQuestion{
+  position:fixed;inset:0;z-index:50;margin:0;overflow:auto;
+  --ink:#2a1d12;--ink-soft:#6a5440;
+  background:var(--parch);color:var(--ink);
+  padding:max(24px,env(safe-area-inset-top)) 24px max(24px,env(safe-area-inset-bottom));
+  gap:3vh;
+}
+body.spotlight .stopped-banner{display:none}
+body.spotlight .meta .pill{font-size:clamp(1rem,2vw,1.4rem);padding:4px 16px}
+body.spotlight .question{font-size:clamp(2.2rem,6.5vw,5.5rem);max-width:22ch;line-height:1.12}
+body.spotlight .answer{font-size:clamp(1.6rem,4.5vw,3.4rem);max-width:28ch}
+body.spotlight .answer small{font-size:clamp(1rem,1.8vw,1.3rem)}
+.question .rest{visibility:hidden}
+body.spotlight .btn{font-size:clamp(1.1rem,2vw,1.5rem);padding:16px 28px}
+
+.center{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:18px;padding:10px 0}
+
+.potato{
+  width:clamp(180px,32vw,240px);aspect-ratio:1;border-radius:50%;border:none;
+  background:radial-gradient(circle at 35% 30%,#c94a4e,var(--seal) 60%,#7a1a1e);
+  color:var(--seal-ink);font-weight:900;font-size:1.35rem;line-height:1.15;padding:20px;
+  box-shadow:0 8px 0 rgba(0,0,0,.35),inset 0 0 0 6px rgba(255,255,255,.12);
+}
+.potato:active{transform:translateY(4px);box-shadow:0 4px 0 rgba(0,0,0,.35)}
+.playing .potato{animation:beat calc(60s / var(--bpm,150)) ease-in-out infinite}
+@keyframes beat{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
+.status{font-weight:900;font-size:clamp(1.3rem,3vw,1.8rem);margin:0}
+.hint{margin:0;color:var(--ink-soft);font-weight:800}
+
+.stopped-banner{font-family:"Grenze Gotisch",Georgia,serif;font-size:clamp(3rem,9vw,5.5rem);line-height:1;color:var(--seal);margin:0;animation:pop .35s ease-out}
+@keyframes pop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
+
+.meta{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.pill{display:inline-block;padding:3px 12px;border-radius:999px;font-weight:800;font-size:.9rem;border:2px solid var(--ink);color:var(--ink);background:var(--parch)}
+.pill.facil{background:#d9ebc9}.pill.media{background:#f4dc9c}.pill.desafio{background:#f0b9a8}
+.question{font-size:clamp(1.6rem,3.4vw,2.6rem);font-weight:900;line-height:1.2;margin:0;max-width:26ch}
+.answer{border-top:3px dashed var(--parch-edge);padding-top:14px;font-size:clamp(1.3rem,2.6vw,1.9rem);font-weight:800;max-width:30ch}
+.answer small{display:block;font-size:.95rem;color:var(--ink-soft)}
+
+.controls{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+.btn{border:none;border-radius:10px;padding:14px 22px;font-weight:900;font-size:1.1rem;box-shadow:0 4px 0 rgba(0,0,0,.3)}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.3)}
+.btn-seal{background:var(--seal);color:var(--seal-ink)}
+.btn-plain{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 2px var(--ink)}
+.keys{margin:12px 0 0;font-size:.85rem;color:var(--ink-soft);font-weight:700;text-align:center}
+.hidden{display:none !important}
+
+@media (max-width:700px){
+}
+@media (prefers-reduced-motion:reduce){
+  .playing .potato,.stopped-banner{animation:none}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1 class="title">Batata Quente Bíblica</h1>
+  <p class="subtitle">Passem a bola enquanto a música toca. Quando parar, quem estiver com ela responde.</p>
+
+  <div class="door">
+    <div class="parch">
+      <!-- idle / playing -->
+      <div class="center" id="viewPlay">
+        <button class="potato" id="playBtn">Tocar música</button>
+        <p class="status" id="status">Todo mundo em roda?</p>
+        <p class="hint" id="hint">A música vai parar sozinha, a qualquer momento.</p>
+      </div>
+
+      <!-- stopped -->
+      <div class="center hidden" id="viewQuestion" aria-live="polite">
+        <p class="stopped-banner">Parou!</p>
+        <button class="btn btn-seal" id="showQBtn">Revelar pergunta</button>
+        <div class="meta" id="qMeta"><span class="pill" id="qLevel"></span><span class="pill" id="qCat"></span></div>
+        <p class="question" id="qText"></p>
+        <div class="answer hidden" id="answerBox"><small>Resposta</small><span id="aText"></span></div>
+        <div class="controls" id="qControls">
+          <button class="btn btn-seal" id="revealBtn">Mostrar resposta</button>
+          <button class="btn btn-seal hidden" id="againBtn">Próxima rodada</button>
+          <button class="btn btn-plain" id="otherBtn">Trocar pergunta</button>
+        </div>
+      </div>
+
+      <div class="settings" id="settings">
+        <label>Perguntas
+          <select id="levelSel">
+            <option value="todas">Todas misturadas</option>
+            <option value="facil">Só fáceis</option>
+            <option value="media">Só médias</option>
+            <option value="desafio">Só desafio</option>
+          </select>
+        </label>
+        <label>Música
+          <select id="songSel">
+            <option value="reformaprotestante.mp3">Reforma Protestante</option>
+            <option value="Deus Nos Amou DVD Quem é Jesus Crianças Diante do Trono.mp3">Deus Nos Amou (Diante do Trono)</option>
+            <option value="Ó Deus DVD Crianças Diante do Trono Crianças Diante do Trono.mp3">Ó Deus (Diante do Trono)</option>
+          </select>
+        </label>
+        <label>Tempo da música
+          <select id="timeSel">
+            <option value="5,12">Curto (5 a 12 s)</option>
+            <option value="10,20" selected>Médio (10 a 20 s)</option>
+            <option value="15,30">Longo (15 a 30 s)</option>
+          </select>
+        </label>
+        <span class="round" id="roundLbl">Rodada 1</span>
+      </div>
+
+      <p class="keys">Atalho: a barra de espaço faz a próxima ação (tocar, parar, revelar pergunta, mostrar resposta, próxima rodada).</p>
+    </div>
+  </div>
+</div>
+
+<script>
+const BANK = {
+  facil: [
+    ["Bíblia","Quem construiu a arca?","Noé"],
+    ["Bíblia","Qual foi o primeiro homem criado por Deus?","Adão"],
+    ["Bíblia","Qual foi a primeira mulher criada por Deus?","Eva"],
+    ["Bíblia","Que animal enganou Eva no jardim?","A serpente"],
+    ["Bíblia","Quem foi engolido por um grande peixe?","Jonas"],
+    ["Bíblia","Quem derrotou o gigante Golias?","Davi"],
+    ["Bíblia","Em que cidade Jesus nasceu?","Belém"],
+    ["Bíblia","Qual era o nome da mãe de Jesus?","Maria"],
+    ["Bíblia","Onde o bebê Jesus foi colocado para dormir?","Numa manjedoura"],
+    ["Bíblia","Quem seguiu uma estrela para visitar Jesus?","Os magos"],
+    ["Bíblia","Quantos discípulos Jesus escolheu?","12"],
+    ["Bíblia","Quem foi jogado na cova dos leões?","Daniel"],
+    ["Bíblia","Quem liderou o povo de Israel na travessia do Mar Vermelho?","Moisés"],
+    ["Bíblia","Que sinal Deus colocou no céu depois do dilúvio?","O arco-íris"],
+    ["Bíblia","Qual oração Jesus ensinou aos discípulos?","O Pai Nosso"],
+    ["Bíblia","Em que dia Jesus ressuscitou?","No terceiro dia"],
+    ["Reforma","Qual monge iniciou a Reforma Protestante?","Martinho Lutero"],
+    ["Reforma","Em que dia se comemora o Dia da Reforma?","31 de outubro"],
+    ["Reforma","Em que país a Reforma começou?","Alemanha"],
+    ["Reforma","Quantas teses Lutero escreveu?","95"],
+    ["Reforma","Onde Lutero fixou suas teses?","Na porta de uma igreja"]
+  ],
+  media: [
+    ["Bíblia","Quantos dias e noites choveu no dilúvio?","40"],
+    ["Bíblia","Qual era o nome do jardim onde Adão e Eva viviam?","Éden"],
+    ["Bíblia","Qual era o nome da esposa de Abraão?","Sara"],
+    ["Bíblia","Qual era o nome do filho que Deus prometeu a Abraão?","Isaque"],
+    ["Bíblia","Quem ganhou uma túnica colorida do pai e foi vendido pelos irmãos?","José"],
+    ["Bíblia","Quem era conhecido por sua força enorme, que vinha do cabelo?","Sansão"],
+    ["Bíblia","Qual rainha corajosa salvou seu povo?","Ester"],
+    ["Bíblia","Quantos mandamentos Deus deu a Moisés?","10"],
+    ["Bíblia","Qual cidade teve as muralhas derrubadas depois que o povo marchou ao redor dela?","Jericó"],
+    ["Bíblia","Qual era a profissão de Pedro antes de seguir Jesus?","Pescador"],
+    ["Bíblia","Quem negou Jesus três vezes?","Pedro"],
+    ["Bíblia","Quem traiu Jesus?","Judas"],
+    ["Bíblia","Qual foi o primeiro milagre de Jesus?","Transformar água em vinho, num casamento em Caná"],
+    ["Bíblia","Quantos pães e peixes Jesus usou para alimentar a multidão?","5 pães e 2 peixes"],
+    ["Bíblia","Qual amigo de Jesus foi ressuscitado depois de quatro dias?","Lázaro"],
+    ["Bíblia","Na parábola, quem ajudou o homem ferido na estrada?","O bom samaritano"],
+    ["Bíblia","Qual parábola conta a história de um filho que gastou tudo e voltou para casa?","O filho pródigo"],
+    ["Reforma","Em que ano a Reforma começou?","1517"],
+    ["Reforma","Em que cidade Lutero fixou as 95 teses?","Wittenberg"],
+    ["Reforma","Lutero criticava a venda de quê?","Indulgências (papéis que prometiam perdão dos pecados em troca de dinheiro)"],
+    ["Reforma","Para qual língua Lutero traduziu a Bíblia?","Alemão"],
+    ["Reforma","Por que era importante traduzir a Bíblia?","Para que as pessoas comuns pudessem lê-la"],
+    ["Reforma","Qual invenção ajudou as ideias da Reforma a se espalharem rápido?","A imprensa (de Gutenberg)"],
+    ["Reforma","Qual hino famoso Lutero escreveu?","“Castelo Forte”"],
+    ["Reforma","O que significa “Sola Scriptura”?","Somente a Escritura"]
+  ],
+  desafio: [
+    ["Bíblia","Qual é o primeiro livro da Bíblia? E o último?","Gênesis e Apocalipse"],
+    ["Bíblia","Quantos livros tem a Bíblia protestante?","66 (39 no Antigo e 27 no Novo Testamento)"],
+    ["Bíblia","Qual é o livro da Bíblia com mais capítulos?","Salmos (150)"],
+    ["Bíblia","Em que monte Moisés recebeu os Dez Mandamentos?","Monte Sinai"],
+    ["Bíblia","Qual profeta subiu ao céu num carro de fogo?","Elias"],
+    ["Bíblia","Quem perdeu quase tudo, mas continuou fiel a Deus?","Jó"],
+    ["Bíblia","Quem subiu numa árvore para conseguir ver Jesus?","Zaqueu"],
+    ["Bíblia","Quantos anos Jesus tinha quando ficou conversando com os mestres no templo?","12"],
+    ["Bíblia","Quem batizou Jesus?","João Batista"],
+    ["Bíblia","Quem escreveu a maior parte das cartas do Novo Testamento?","Paulo"],
+    ["Bíblia","Qual era o nome de Paulo antes de conhecer Jesus?","Saulo"],
+    ["Bíblia","Qual é o versículo mais curto da Bíblia?","“Jesus chorou” (João 11:35)"],
+    ["Reforma","Quais são as Cinco Solas da Reforma?","Somente a Escritura, somente a fé, somente a graça, somente Cristo, glória somente a Deus"],
+    ["Reforma","Qual reformador ficou famoso na cidade de Genebra?","João Calvino"],
+    ["Reforma","Qual reformador atuou em Zurique, na Suíça?","Ulrico Zuínglio"],
+    ["Reforma","Em que reunião Lutero se recusou a voltar atrás no que escreveu?","Dieta de Worms (1521)"],
+    ["Reforma","Em que castelo Lutero se escondeu e traduziu o Novo Testamento?","Castelo de Wartburg"],
+    ["Reforma","Qual era o nome da esposa de Lutero?","Catarina von Bora"],
+    ["Reforma","Quem traduziu a Bíblia para o inglês na época da Reforma?","William Tyndale"]
+  ]
+};
+const LEVEL_NAME = {facil:"Fácil",media:"Média",desafio:"Desafio"};
+const $ = id => document.getElementById(id);
+
+/* ---------- Perguntas sem repetir ---------- */
+const ALL = [];
+Object.keys(BANK).forEach(lv => BANK[lv].forEach((r,i)=>ALL.push({level:lv,id:lv+i,cat:r[0],q:r[1],a:r[2]})));
+const used = new Set();
+let current = null;
+function drawQuestion(){
+  const filter = $("levelSel").value;
+  const pool = ALL.filter(x => filter==="todas" || x.level===filter);
+  let free = pool.filter(x => !used.has(x.id) && (!current || x.id!==current.id));
+  if (!free.length){ pool.forEach(x=>used.delete(x.id)); free = pool.filter(x => !current || x.id!==current.id); }
+  if (!free.length) free = pool;
+  const pick = free[Math.floor(Math.random()*free.length)];
+  used.add(pick.id);
+  return pick;
+}
+
+/* ---------- Música (arquivo mp3, retoma de onde parou) ---------- */
+// cada música guarda o próprio ponto onde parou
+const songs = {};
+function getSong(){
+  const file = $("songSel").value;
+  if (!songs[file]){
+    const a = new Audio(encodeURI(file));
+    a.loop = true;      // se a música acabar, recomeça do início
+    a.preload = "auto";
+    songs[file] = a;
+  }
+  return songs[file];
+}
+let song = null;
+const showSong = new Audio(encodeURI("Trilha Sonora De Seleção De Peguntas Do (Show Do Milhão) SBT 1999-2009.mp3"));
+showSong.preload = "auto";
+let ac = null, stopTimer = null;
+
+function playShowSong(){
+  showSong.currentTime = 0;
+  showSong.play().catch(err => console.warn("Não foi possível tocar a música do Show do Milhão:", err));
+}
+function stopShowSong(){
+  showSong.pause();
+  showSong.currentTime = 0;
+}
+
+function startMusic(){
+  // play() continua do ponto em que a música foi pausada (currentTime é mantido)
+  song = getSong();
+  song.play().catch(err => console.warn("Não foi possível tocar a música:", err));
+}
+function stopMusic(){
+  if (song) song.pause();
+  // som de parada
+  ac = ac || new (window.AudioContext||window.webkitAudioContext)();
+  if (ac.state === "suspended") ac.resume();
+  const t = ac.currentTime + .04;
+  const g = ac.createGain(); g.connect(ac.destination);
+  [[392,0],[311,.14],[233,.28]].forEach(([f,d])=>{
+    const o = ac.createOscillator(), gg = ac.createGain();
+    o.type="sawtooth"; o.frequency.value=f;
+    gg.gain.setValueAtTime(.18,t+d); gg.gain.exponentialRampToValueAtTime(.001,t+d+.22);
+    o.connect(gg).connect(g); o.start(t+d); o.stop(t+d+.25);
+  });
+}
+
+/* ---------- Fluxo ---------- */
+let phase = "idle"; // idle | playing | stopped | question | revealed
+let round = 1;
+
+function setPhase(p){
+  phase = p;
+  document.body.classList.toggle("playing", p==="playing");
+  document.body.classList.toggle("spotlight", p==="question"||p==="revealed");
+  $("viewPlay").classList.toggle("hidden", !(p==="idle"||p==="playing"));
+  $("viewQuestion").classList.toggle("hidden", !(p==="stopped"||p==="question"||p==="revealed"));
+  const hideQ = p==="stopped";
+  $("showQBtn").classList.toggle("hidden", !hideQ);
+  ["qMeta","qText","qControls"].forEach(id => $(id).classList.toggle("hidden", hideQ));
+  $("settings").style.visibility = p==="playing" ? "hidden" : "visible";
+  if (p==="idle"){
+    $("playBtn").textContent = "Tocar música";
+    $("status").textContent = round===1 ? "Todo mundo em roda?" : "Pronto para a próxima rodada";
+    $("hint").textContent = "A música vai parar sozinha, a qualquer momento.";
+  }
+  if (p==="playing"){
+    $("playBtn").textContent = "Parar agora";
+    $("status").textContent = "Passa a batata!";
+    $("hint").textContent = "Rápido, ninguém quer ficar com ela.";
+  }
+  $("roundLbl").textContent = `Rodada ${round}`;
+}
+
+function play(){
+  if (phase !== "idle") return;
+  setPhase("playing");
+  startMusic();
+  const [a,b] = $("timeSel").value.split(",").map(Number);
+  const ms = (a + Math.random()*(b-a))*1000;
+  stopTimer = setTimeout(stopNow, ms);
+  $("playBtn").focus();
+}
+function stopNow(){
+  if (phase !== "playing") return;
+  clearTimeout(stopTimer);
+  stopMusic();
+  current = drawQuestion();
+  showQuestion();
+  setPhase("stopped");
+  $("showQBtn").focus();
+}
+function revealQuestion(){
+  if (phase !== "stopped") return;
+  setPhase("question");
+  playShowSong();
+  typeQuestion();
+  $("revealBtn").focus();
+}
+let typeTimer = null;
+function typeQuestion(){
+  clearInterval(typeTimer);
+  const el = $("qText"), text = current.q;
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches){ el.textContent = text; return; }
+  const chars = Array.from(text);
+  const stepMs = Math.min(70, 4500 / chars.length); // pergunta inteira em até ~4,5 s
+  let n = 0;
+  el.setAttribute("aria-label", text);
+  el.innerHTML = '<span class="typed"></span><span class="rest" aria-hidden="true"></span>';
+  const typed = el.firstChild, rest = el.lastChild;
+  const draw = () => { typed.textContent = chars.slice(0,n).join(""); rest.textContent = chars.slice(n).join(""); };
+  draw();
+  typeTimer = setInterval(() => { n++; draw(); if (n >= chars.length) finishTyping(); }, stepMs);
+}
+function finishTyping(){
+  clearInterval(typeTimer); typeTimer = null;
+  if (current){ $("qText").textContent = current.q; $("qText").removeAttribute("aria-label"); }
+}
+function showQuestion(){
+  const lv = $("qLevel"); lv.textContent = LEVEL_NAME[current.level]; lv.className = "pill " + current.level;
+  $("qCat").textContent = current.cat;
+  $("qText").textContent = current.q;
+  $("aText").textContent = current.a;
+  $("answerBox").classList.add("hidden");
+  $("revealBtn").classList.remove("hidden");
+  $("againBtn").classList.add("hidden");
+  $("otherBtn").classList.remove("hidden");
+}
+function reveal(){
+  if (phase !== "question") return;
+  finishTyping();
+  $("answerBox").classList.remove("hidden");
+  $("revealBtn").classList.add("hidden");
+  $("againBtn").classList.remove("hidden");
+  $("otherBtn").classList.add("hidden");
+  setPhase("revealed");
+  $("againBtn").focus();
+}
+function nextRound(){
+  if (phase !== "revealed") return;
+  stopShowSong();
+  finishTyping();
+  round++;
+  setPhase("idle");
+  $("playBtn").focus();
+}
+
+$("playBtn").onclick = () => phase==="idle" ? play() : stopNow();
+$("showQBtn").onclick = revealQuestion;
+$("revealBtn").onclick = reveal;
+$("againBtn").onclick = nextRound;
+$("otherBtn").onclick = () => { if (phase==="question"){ current = drawQuestion(); showQuestion(); typeQuestion(); } };
+
+document.addEventListener("keydown", e => {
+  if (e.key !== " " || e.target.tagName === "SELECT" || e.target.tagName === "BUTTON") return;
+  e.preventDefault();
+  if (phase==="idle") play();
+  else if (phase==="playing") stopNow();
+  else if (phase==="stopped") revealQuestion();
+  else if (phase==="question") reveal();
+  else if (phase==="revealed") nextRound();
+});
+
+setPhase("idle");
+</script>
+</body>
+</html>
